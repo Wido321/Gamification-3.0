@@ -1,35 +1,70 @@
 import { create } from 'zustand'
+import { persist, createJSONStorage } from 'zustand/middleware'
 import type { UserRole } from '@/types/database'
 
+// ─── Types ───────────────────────────────────────────────────────────────────
+
 interface UserProfile {
-  id: string
-  role: UserRole
-  full_name: string
-  xp: number
-  rank: string
+  id:               string
+  role:             UserRole
+  full_name:        string
+  xp:               number
+  aura_points:      number
+  rank:             string
   selection_weight: number
 }
 
-interface UserStore {
-  profile: UserProfile | null
-  isLoading: boolean
-  setProfile: (profile: UserProfile | null) => void
-  setLoading: (loading: boolean) => void
-  updateXP: (xp: number, rank: string) => void
-  reset: () => void
+interface XPEvent {
+  xp_gained:  number
+  aura_gained: number
+  new_xp:     number
+  new_rank:   string
+  ranked_up:  boolean
+  old_rank:   string
 }
 
-export const useUserStore = create<UserStore>((set) => ({
-  profile: null,
-  isLoading: true,
+interface UserStore {
+  profile:       UserProfile | null
+  isLoading:     boolean
+  lastXPEvent:   XPEvent | null
 
-  setProfile: (profile) => set({ profile }),
-  setLoading: (isLoading) => set({ isLoading }),
+  // Actions
+  setProfile:    (profile: UserProfile | null) => void
+  setLoading:    (loading: boolean) => void
+  applyXPEvent:  (event: XPEvent) => void
+  clearXPEvent:  () => void
+  reset:         () => void
+}
 
-  updateXP: (xp, rank) =>
-    set((state) => ({
-      profile: state.profile ? { ...state.profile, xp, rank } : null,
-    })),
+// ─── Store ────────────────────────────────────────────────────────────────────
 
-  reset: () => set({ profile: null, isLoading: false }),
-}))
+export const useUserStore = create<UserStore>()(
+  persist(
+    (set) => ({
+      profile:     null,
+      isLoading:   true,
+      lastXPEvent: null,
+
+      setProfile: (profile) => set({ profile, isLoading: false }),
+      setLoading: (isLoading) => set({ isLoading }),
+
+      // Called after a successful award_xp RPC call to update local UI immediately
+      applyXPEvent: (event) =>
+        set((state) => ({
+          lastXPEvent: event,
+          profile: state.profile
+            ? { ...state.profile, xp: event.new_xp, rank: event.new_rank }
+            : null,
+        })),
+
+      clearXPEvent: () => set({ lastXPEvent: null }),
+
+      reset: () => set({ profile: null, isLoading: false, lastXPEvent: null }),
+    }),
+    {
+      name: 'gamification-user',
+      storage: createJSONStorage(() => sessionStorage), // sessionStorage: cleared on tab close
+      partialize: (state) => ({ profile: state.profile }), // Only persist profile, not loading state
+    }
+  )
+)
