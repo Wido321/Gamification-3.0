@@ -1,5 +1,6 @@
-import { Shield, LayoutDashboard, User, Trophy, ScrollText, Store, Settings, LogOut } from 'lucide-react'
+import { Shield, LayoutDashboard, User, Trophy, ScrollText, Store, Settings } from 'lucide-react'
 import Link from 'next/link'
+import { LogoutButton } from '@/components/dashboard/LogoutButton'
 
 export default function DashboardLayout({
   children,
@@ -40,10 +41,7 @@ export default function DashboardLayout({
             ))}
           </nav>
 
-          <button className="mt-auto flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-bold text-zinc-500 transition-all hover:bg-red-500/10 hover:text-red-400">
-            <LogOut size={20} />
-            Logout
-          </button>
+          <LogoutButton />
         </div>
       </aside>
 

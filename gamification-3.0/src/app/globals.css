@@ -95,7 +95,12 @@
 }
 
 .auth-bg-grid {
-  @apply absolute inset-0 cyber-grid opacity-20;
+  @apply absolute inset-0 opacity-20;
+  background-image: 
+    linear-gradient(rgba(var(--cyber-purple), 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(var(--cyber-purple), 0.05) 1px, transparent 1px);
+  background-size: 50px 50px;
+  mask-image: radial-gradient(ellipse at center, black, transparent 80%);
 }
 
 .auth-orb {
@@ -111,8 +116,14 @@
 }
 
 .auth-glass-card {
-  @apply cyber-card z-10 w-full max-w-md p-8 backdrop-blur-2xl;
+  @apply relative overflow-hidden rounded-2xl bg-white/5 z-10 w-full max-w-md p-8 backdrop-blur-2xl transition-all duration-300;
   border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
+}
+
+.auth-glass-card:hover {
+  @apply border-white/20 bg-white/10;
+  box-shadow: 0 0 20px rgba(var(--cyber-purple), 0.15);
 }
 
 .auth-title {

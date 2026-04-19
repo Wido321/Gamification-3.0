@@ -75,6 +75,26 @@ export async function getActiveMissionsAction() {
   return { success: true as const, data: data ?? [] }
 }
 
+// ─── Action: Get the Leaderboard ──────────────────────────────────────────────
+
+export async function getLeaderboardAction() {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+
+  if (!user) return { success: false as const, error: 'Not authenticated' }
+
+  // Fetch only students, ordered by XP descending
+  const { data, error } = await supabase
+    .from('users')
+    .select('id, full_name, xp, aura_points, rank')
+    .eq('role', 'student')
+    .order('xp', { ascending: false })
+    .limit(100)
+
+  if (error) return { success: false as const, error: 'Failed to fetch leaderboard.' }
+  return { success: true as const, data: data ?? [] }
+}
+
 // ─── Action: Sign out ────────────────────────────────────────────────────────
 
 export async function signOutAction() {
