@@ -6,7 +6,7 @@
 ```json
 {
   "id": "uuid",
-  "role": "ENUM('teacher', 'student')",
+  "role": "ENUM('teacher', 'student', 'dev')",
   "full_name": "string",
   "xp": "integer (default: 0)",
   "rank": "string",
