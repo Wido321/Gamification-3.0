@@ -5,11 +5,17 @@ import { revalidatePath } from 'next/cache'
 
 // ─── Action: Get the current user's own profile ───────────────────────────────
 
-export async function getMyProfileAction() {
+export type ProfileResponse = {
+  success: boolean;
+  error?: string;
+  data?: any;
+}
+
+export async function getMyProfileAction(): Promise<ProfileResponse> {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
-  if (!user) return { success: false as const, error: 'Not authenticated' }
+  if (!user) return { success: false, error: 'Not authenticated' }
 
   const { data, error } = await supabase
     .from('users')
@@ -17,17 +23,17 @@ export async function getMyProfileAction() {
     .eq('id', user.id)
     .single()
 
-  if (error || !data) return { success: false as const, error: 'Profile not found' }
-  return { success: true as const, data }
+  if (error || !data) return { success: false, error: 'Profile not found' }
+  return { success: true, data }
 }
 
 // ─── Action: Get the student's own response history ──────────────────────────
 
-export async function getMyResponsesAction() {
+export async function getMyResponsesAction(): Promise<ProfileResponse> {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
-  if (!user) return { success: false as const, error: 'Not authenticated' }
+  if (!user) return { success: false, error: 'Not authenticated' }
 
   const { data, error } = await supabase
     .from('responses')
@@ -36,34 +42,34 @@ export async function getMyResponsesAction() {
     .order('created_at', { ascending: false })
     .limit(50)
 
-  if (error) return { success: false as const, error: 'Failed to fetch history.' }
-  return { success: true as const, data: data ?? [] }
+  if (error) return { success: false, error: 'Failed to fetch history.' }
+  return { success: true, data: data ?? [] }
 }
 
 // ─── Action: Get the student's inventory ────────────────────────────────────
 
-export async function getMyInventoryAction() {
+export async function getMyInventoryAction(): Promise<ProfileResponse> {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
-  if (!user) return { success: false as const, error: 'Not authenticated' }
+  if (!user) return { success: false, error: 'Not authenticated' }
 
   const { data, error } = await supabase
     .from('inventory')
     .select('id, item_id, quantity')
     .eq('student_id', user.id)
 
-  if (error) return { success: false as const, error: 'Failed to fetch inventory.' }
-  return { success: true as const, data: data ?? [] }
+  if (error) return { success: false, error: 'Failed to fetch inventory.' }
+  return { success: true, data: data ?? [] }
 }
 
 // ─── Action: Get all active missions ─────────────────────────────────────────
 
-export async function getActiveMissionsAction() {
+export async function getActiveMissionsAction(): Promise<ProfileResponse> {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
-  if (!user) return { success: false as const, error: 'Not authenticated' }
+  if (!user) return { success: false, error: 'Not authenticated' }
 
   const { data, error } = await supabase
     .from('missions')
@@ -71,17 +77,17 @@ export async function getActiveMissionsAction() {
     .eq('is_active', true)
     .order('reward_xp', { ascending: false })
 
-  if (error) return { success: false as const, error: 'Failed to fetch missions.' }
-  return { success: true as const, data: data ?? [] }
+  if (error) return { success: false, error: 'Failed to fetch missions.' }
+  return { success: true, data: data ?? [] }
 }
 
 // ─── Action: Get the Leaderboard ──────────────────────────────────────────────
 
-export async function getLeaderboardAction() {
+export async function getLeaderboardAction(): Promise<ProfileResponse> {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
-  if (!user) return { success: false as const, error: 'Not authenticated' }
+  if (!user) return { success: false, error: 'Not authenticated' }
 
   // Fetch only students, ordered by XP descending
   const { data, error } = await supabase
@@ -91,8 +97,8 @@ export async function getLeaderboardAction() {
     .order('xp', { ascending: false })
     .limit(100)
 
-  if (error) return { success: false as const, error: 'Failed to fetch leaderboard.' }
-  return { success: true as const, data: data ?? [] }
+  if (error) return { success: false, error: 'Failed to fetch leaderboard.' }
+  return { success: true, data: data ?? [] }
 }
 
 // ─── Action: Sign out ────────────────────────────────────────────────────────

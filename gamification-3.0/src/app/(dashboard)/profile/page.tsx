@@ -49,7 +49,7 @@ export default async function ProfilePage() {
           <p className="text-zinc-500 text-sm font-mono text-center p-8 bg-black/50 rounded-xl border border-white/5">No activity recorded yet.</p>
         ) : (
           <div className="space-y-3">
-            {history.map((record) => (
+            {history.map((record: any) => (
               <div key={record.id} className="p-4 rounded-xl border border-white/5 bg-black/60 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:border-white/20 transition-all">
                 <div>
                   <div className="flex gap-2 mb-1">

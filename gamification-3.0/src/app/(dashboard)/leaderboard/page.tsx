@@ -35,7 +35,7 @@ export default async function LeaderboardPage() {
 
       <div className="cyber-card p-6 border-white/5 bg-black/40">
         <div className="space-y-3">
-          {leaderboard?.map((student, index) => {
+          {leaderboard?.map((student: any, index: number) => {
             const isTop3 = index < 3
             const isMe = student.id === profile.id
 

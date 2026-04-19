@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { Activity, Database, Users, ShieldAlert, Terminal, Loader2 } from 'lucide-react'
-import { createClient } from '@/utils/supabase/client'
+import { createClient } from '@/lib/supabase/client'
 
 export function DevView({ profile }: { profile: any }) {
   const [systemStats, setSystemStats] = useState<any>(null)

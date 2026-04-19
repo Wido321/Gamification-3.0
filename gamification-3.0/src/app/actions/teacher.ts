@@ -25,7 +25,7 @@ async function assertTeacher(): Promise<{ id: string } | ActionResult<never>> {
     .single()
 
   if (error || !profile) return { success: false, error: 'Unauthorized: profile not found' }
-  if (!['teacher', 'dev'].includes(profile.role)) {
+  if (!['teacher', 'dev'].includes((profile as any).role)) {
     return { success: false, error: 'Forbidden: teacher role required' }
   }
 
@@ -58,7 +58,7 @@ export async function awardXPAction(
 
   // 3. Call the secure server-side RPC (never a client-side UPDATE)
   const supabase = await createClient()
-  const { data, error } = await supabase
+  const { data, error } = await (supabase as any)
     .rpc('award_xp', {
       p_student_id: student_id,
       p_difficulty: difficulty,

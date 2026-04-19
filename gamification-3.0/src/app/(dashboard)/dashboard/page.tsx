@@ -7,11 +7,13 @@ import { redirect } from 'next/navigation'
 export const dynamic = 'force-dynamic'
 
 export default async function DashboardPage() {
-  const { success, data: profile } = await getMyProfileAction()
+  const result = await getMyProfileAction()
 
-  if (!success || !profile) {
+  if (!result.success || !result.data) {
     redirect('/auth/login')
   }
+
+  const profile = result.data as any
 
   return (
     <div className="w-full">
@@ -21,3 +23,4 @@ export default async function DashboardPage() {
     </div>
   )
 }
+
